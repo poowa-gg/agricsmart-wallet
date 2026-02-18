@@ -94,9 +94,29 @@ export const BiometricOnboarding = ({ onComplete }) => {
 
 export const FarmRegistration = ({ onComplete }) => {
     const [submitting, setSubmitting] = useState(false);
+    const [gpsCaptured, setGpsCaptured] = useState(false);
+    const [capturingGps, setCapturingGps] = useState(false);
+    const [gpsProgress, setGpsProgress] = useState(0);
+
+    const handleGpsCapture = () => {
+        setCapturingGps(true);
+        setGpsProgress(0);
+        const interval = setInterval(() => {
+            setGpsProgress(prev => {
+                if (prev >= 100) {
+                    clearInterval(interval);
+                    setCapturingGps(false);
+                    setGpsCaptured(true);
+                    return 100;
+                }
+                return prev + 5;
+            });
+        }, 100);
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        if (!gpsCaptured) return;
         setSubmitting(true);
         setTimeout(() => {
             setSubmitting(false);
@@ -139,23 +159,53 @@ export const FarmRegistration = ({ onComplete }) => {
                         </div>
                         <div className="relative z-10 h-full flex flex-col justify-between">
                             <div className="flex justify-between items-start">
-                                <div className="bg-[#001F3F]/20 text-[#001F3F] p-1 px-2 rounded-lg text-[10px] font-bold border border-[#001F3F]/30">GPS ACTIVE</div>
+                                <div className={`p-1 px-2 rounded-lg text-[10px] font-bold border ${gpsCaptured ? 'bg-green-500/20 text-green-500 border-green-500/30' : 'bg-[#001F3F]/20 text-[#001F3F] border-[#001F3F]/30'}`}>
+                                    {gpsCaptured ? 'GPS VERIFIED' : capturingGps ? 'WALKING...' : 'GPS ACTIVE'}
+                                </div>
                                 <Maximize size={16} className="text-slate-500" />
                             </div>
-                            <div className="flex items-center gap-2 text-white">
-                                <MapPin className="text-[#001F3F]" size={20} />
-                                <div>
-                                    <p className="text-xs font-bold leading-none">Sector G-12</p>
-                                    <p className="text-[10px] opacity-60">9.0820° N, 7.4913° E</p>
+
+                            {capturingGps ? (
+                                <div className="w-full space-y-2">
+                                    <div className="flex justify-between text-[10px] text-white font-bold uppercase tracking-widest">
+                                        <span>Capturing boundary points...</span>
+                                        <span>{gpsProgress}%</span>
+                                    </div>
+                                    <div className="w-full bg-white/10 h-1 rounded-full overflow-hidden">
+                                        <motion.div
+                                            initial={{ width: 0 }}
+                                            animate={{ width: `${gpsProgress}%` }}
+                                            className="bg-[#001F3F] h-full"
+                                        />
+                                    </div>
                                 </div>
-                            </div>
+                            ) : (
+                                <div className="flex items-center gap-2 text-white">
+                                    <MapPin className={gpsCaptured ? 'text-green-500' : 'text-[#001F3F]'} size={20} />
+                                    <div>
+                                        <p className="text-xs font-bold leading-none">{gpsCaptured ? 'Coordinate Locked' : 'Sector G-12'}</p>
+                                        <p className="text-[10px] opacity-60">9.0820° N, 7.4913° E</p>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
 
+                    {!gpsCaptured && !capturingGps && (
+                        <button
+                            type="button"
+                            onClick={handleGpsCapture}
+                            className="w-full py-4 bg-[#001F3F]/10 text-[#001F3F] rounded-2xl font-bold text-sm flex items-center justify-center gap-2 border border-[#001F3F]/20 hover:bg-[#001F3F]/20 transition-all mb-4"
+                        >
+                            <MapPin size={18} />
+                            Walk to capture accurate location
+                        </button>
+                    )}
+
                     <button
                         type="submit"
-                        disabled={submitting}
-                        className="w-full btn-primary"
+                        disabled={submitting || !gpsCaptured}
+                        className={`w-full py-5 rounded-2xl font-bold text-white transition-all ${gpsCaptured ? 'bg-[#001F3F] shadow-lg shadow-blue-900/20' : 'bg-slate-300 cursor-not-allowed'}`}
                     >
                         {submitting ? 'Registering Farm...' : 'Finalize Registration'}
                     </button>

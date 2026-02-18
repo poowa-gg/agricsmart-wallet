@@ -22,13 +22,14 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { BiometricOnboarding, FarmRegistration } from './components/Onboarding';
 import { GovernmentDashboard, AgentInterface, AgroDealerInterface } from './components/AdminInterfaces';
+import { USSDSimulator } from './components/USSDSimulator';
 
 // --- MOCK DATA ---
 const INITIAL_WALLET = { subsidy: 154200, credit: 500000, repaymentProgress: 18 };
 const TRANSACTIONS = [
-  { id: 1, type: 'REDEMPTION', amount: 45000, title: 'Fertilizer Purchase', date: '2026-02-15' },
+  { id: 1, type: 'REDEMPTION', amount: 45000, title: 'Fertilizer Purchase', date: '2026-02-15', supplyDetail: '3 Bags NPK 15-15-15' },
   { id: 2, type: 'SUBSIDY', amount: 150000, title: 'Dry Season Support', date: '2026-02-10' },
-  { id: 3, type: 'REDEMPTION', amount: 12500, title: 'Certified Rice Seeds', date: '2026-02-01' },
+  { id: 3, type: 'REDEMPTION', amount: 12500, title: 'Certified Rice Seeds', date: '2026-02-01', supplyDetail: '5kg Faro 44 Hybrid' },
 ];
 
 const ADVISORIES = [
@@ -37,6 +38,75 @@ const ADVISORIES = [
 ];
 
 // --- COMPONENTS ---
+
+const SoilAnalysisModal = ({ isOpen, onClose }) => {
+  const [analyzing, setAnalyzing] = useState(false);
+  const [result, setResult] = useState(null);
+
+  const startAnalysis = () => {
+    setAnalyzing(true);
+    setTimeout(() => {
+      setAnalyzing(false);
+      setResult({
+        precise: "pH Level: 6.5 | Nitrogen: High | Phosphorus: Medium",
+        general: "Your soil is ideal for root crops. Add 20kg of Potash per hectare for optimal yield."
+      });
+    }, 3000);
+  };
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[100] flex items-center justify-center p-4">
+          <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }} className="bg-white w-full max-w-sm rounded-[2.5rem] overflow-hidden shadow-2xl">
+            <div className="bg-slate-900 h-48 relative flex items-center justify-center overflow-hidden">
+              <div className="absolute inset-4 border-2 border-white/20 rounded-2xl border-dashed" />
+              {analyzing ? (
+                <motion.div animate={{ opacity: [0.3, 1, 0.3] }} transition={{ repeat: Infinity, duration: 1.5 }} className="text-white text-center">
+                  <Activity size={48} className="mx-auto mb-2 text-blue-400" />
+                  <p className="text-[10px] font-bold uppercase tracking-[0.2em]">Deep Sample Analysis...</p>
+                </motion.div>
+              ) : result ? (
+                <div className="w-full h-full bg-cover bg-center flex items-center justify-center" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1592982537447-7440770cbfc9?auto=format&fit=crop&q=80&w=800)' }}>
+                  <div className="absolute inset-0 bg-gov-blue/40" />
+                  <CheckCircle2 className="text-white relative z-10" size={48} />
+                </div>
+              ) : (
+                <Camera className="text-white/20" size={64} />
+              )}
+            </div>
+
+            <div className="p-8">
+              {!result ? (
+                <>
+                  <h3 className="text-2xl font-bold text-slate-800 mb-2 tracking-tight">Soil Insight AI</h3>
+                  <p className="text-xs text-slate-500 mb-8 leading-relaxed font-medium">Capture a high-res photo of your soil. Our real-time lab integration analyzes mineral composition instantly.</p>
+                  <button onClick={startAnalysis} disabled={analyzing} className="w-full btn-primary py-4 flex items-center justify-center gap-2">
+                    {analyzing ? <Loader2 className="animate-spin" size={20} /> : <Camera size={20} />}
+                    {analyzing ? 'Analyzing Lab Data...' : 'Start Real-time Analysis'}
+                  </button>
+                </>
+              ) : (
+                <>
+                  <div className="bg-slate-50 p-4 rounded-2xl mb-4 border border-slate-100">
+                    <p className="text-[10px] font-bold text-blue-600 uppercase mb-1">Precise Data</p>
+                    <p className="text-xs font-bold text-slate-800">{result.precise}</p>
+                  </div>
+                  <div className="bg-gov-green/5 p-4 rounded-2xl mb-8 border border-gov-green/10">
+                    <p className="text-[10px] font-bold text-gov-green uppercase mb-1">General Recommendation</p>
+                    <p className="text-xs font-medium text-slate-600 leading-relaxed">{result.general}</p>
+                  </div>
+                  <button onClick={onClose} className="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold text-sm">Close Analysis</p>
+                </>
+              )}
+            </div>
+            <button onClick={onClose} className="absolute top-4 right-4 p-2 bg-white/20 rounded-full text-white hover:bg-white/30 transition-colors"><X size={16} /></button>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
 
 const Header = ({ userRole, onLogout }) => (
   <header className="fixed top-0 left-0 right-0 bg-[#001F3F] text-white p-4 flex justify-between items-center z-50 shadow-lg shadow-blue-900/10">
@@ -62,82 +132,106 @@ const Header = ({ userRole, onLogout }) => (
   </header>
 );
 
-const FarmerDashboard = () => (
-  <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="pt-24 pb-24 px-4 max-w-md mx-auto">
-    <div className="mb-8">
-      <h2 className="text-3xl font-bold text-slate-800 tracking-tighter">My Wallet</h2>
-      <p className="text-sm text-slate-500">Government ID: NG-FARM-9021</p>
-    </div>
+const FarmerDashboard = () => {
+  const [isSoilModalOpen, setIsSoilModalOpen] = useState(false);
 
-    {/* Wallet Cards */}
-    <div className="flex gap-4 overflow-x-auto pb-6 scrollbar-hide -mx-4 px-4">
-      <div className="bg-gradient-to-br from-[#001F3F] to-[#003366] p-6 rounded-[2.5rem] text-white shadow-2xl min-w-[280px] relative overflow-hidden group hover:scale-[1.02] transition-transform">
-        <p className="text-[10px] font-bold uppercase opacity-80 tracking-widest mb-1">Subsidy Balance</p>
-        <h3 className="text-3xl font-bold italic">₦{INITIAL_WALLET.subsidy.toLocaleString()}</h3>
-        <div className="mt-8 flex justify-between items-center">
-          <div className="bg-white/20 p-2 rounded-xl"><Wallet size={20} /></div>
-          <span className="text-[10px] font-bold bg-white/20 px-3 py-1 rounded-full uppercase">Verified Credit</span>
-        </div>
+  return (
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="pt-24 pb-24 px-4 max-w-md mx-auto">
+      <div className="mb-8">
+        <h2 className="text-3xl font-bold text-slate-800 tracking-tighter">My Wallet</h2>
+        <p className="text-sm text-slate-500">Government ID: NG-FARM-9021</p>
       </div>
 
-      <div className="bg-gradient-to-br from-gov-blue to-slate-800 p-6 rounded-[2.5rem] text-white shadow-2xl min-w-[280px] relative overflow-hidden">
-        <p className="text-[10px] font-bold uppercase opacity-80 tracking-widest mb-1">Input Credit line</p>
-        <h3 className="text-3xl font-bold italic">₦{INITIAL_WALLET.credit.toLocaleString()}</h3>
-        <div className="mt-8 flex justify-between items-center">
-          <div className="bg-white/20 p-2 rounded-xl"><Briefcase size={20} /></div>
-          <span className="text-[10px] font-bold bg-white/20 px-3 py-1 rounded-full uppercase">Revolving Fund</span>
-        </div>
-      </div>
-    </div>
-
-    {/* Repayment Progress */}
-    <div className="glass-card p-6 mb-8 mt-4 border-slate-50">
-      <div className="flex justify-between items-center mb-4">
-        <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Credit Recovery</span>
-        <span className="text-xs font-bold text-blue-900">{INITIAL_WALLET.repaymentProgress}%</span>
-      </div>
-      <div className="w-full bg-slate-100 h-3 rounded-full overflow-hidden mb-2">
-        <div className="bg-[#001F3F] h-full rounded-full w-[18%] shadow-[0_0_10px_rgba(0,31,63,0.3)]" />
-      </div>
-      <p className="text-[10px] text-slate-400 font-medium text-center uppercase tracking-tighter">Automatic harvest deduction active</p>
-    </div>
-
-    {/* Advisory */}
-    <div className="mb-8">
-      <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Pulse Insights</h3>
-      {ADVISORIES.map(a => (
-        <div key={a.id} className="glass-card p-4 flex gap-4 items-start mb-3 border-transparent">
-          <div className="bg-slate-50 p-3 rounded-2xl">{a.icon}</div>
-          <div>
-            <h4 className="font-bold text-xs text-slate-800">{a.title}</h4>
-            <p className="text-[10px] text-slate-500 leading-relaxed font-medium">{a.text}</p>
+      {/* Wallet Cards */}
+      <div className="flex gap-4 overflow-x-auto pb-6 scrollbar-hide -mx-4 px-4">
+        <div className="bg-gradient-to-br from-[#001F3F] to-[#003366] p-6 rounded-[2.5rem] text-white shadow-2xl min-w-[280px] relative overflow-hidden group hover:scale-[1.02] transition-transform">
+          <p className="text-[10px] font-bold uppercase opacity-80 tracking-widest mb-1">Subsidy Balance</p>
+          <h3 className="text-3xl font-bold italic">₦{INITIAL_WALLET.subsidy.toLocaleString()}</h3>
+          <div className="mt-8 flex justify-between items-center">
+            <div className="bg-white/20 p-2 rounded-xl"><Wallet size={20} /></div>
+            <span className="text-[10px] font-bold bg-white/20 px-3 py-1 rounded-full uppercase">Verified Credit</span>
           </div>
         </div>
-      ))}
-    </div>
 
-    {/* Transactions */}
-    <div>
-      <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Transaction History</h3>
-      <div className="space-y-3">
-        {TRANSACTIONS.map(tx => (
-          <div key={tx.id} className="flex items-center justify-between p-4 bg-white rounded-[2rem] border border-slate-100 shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className={`p-2 rounded-xl ${tx.type === 'REDEMPTION' ? 'bg-orange-50 text-orange-500' : 'bg-[#001F3F]/10 text-[#001F3F]'}`}>
-                {tx.type === 'REDEMPTION' ? <ArrowUpRight size={18} /> : <ArrowDownLeft size={18} />}
+        <div className="bg-gradient-to-br from-gov-blue to-slate-800 p-6 rounded-[2.5rem] text-white shadow-2xl min-w-[280px] relative overflow-hidden">
+          <p className="text-[10px] font-bold uppercase opacity-80 tracking-widest mb-1">Input Credit line</p>
+          <h3 className="text-3xl font-bold italic">₦{INITIAL_WALLET.credit.toLocaleString()}</h3>
+          <div className="mt-8 flex justify-between items-center">
+            <div className="bg-white/20 p-2 rounded-xl"><Briefcase size={20} /></div>
+            <span className="text-[10px] font-bold bg-white/20 px-3 py-1 rounded-full uppercase">Revolving Fund</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Repayment Progress */}
+      <div className="glass-card p-6 mb-8 mt-4 border-slate-50">
+        <div className="flex justify-between items-center mb-4">
+          <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Credit Recovery</span>
+          <span className="text-xs font-bold text-blue-900">{INITIAL_WALLET.repaymentProgress}%</span>
+        </div>
+        <div className="w-full bg-slate-100 h-3 rounded-full overflow-hidden mb-2">
+          <div className="bg-[#001F3F] h-full rounded-full w-[18%] shadow-[0_0_10px_rgba(0,31,63,0.3)]" />
+        </div>
+        <p className="text-[10px] text-slate-400 font-medium text-center uppercase tracking-tighter">Automatic harvest deduction active</p>
+      </div>
+
+      {/* Advisory */}
+      <div className="mb-8">
+        <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Pulse Insights</h3>
+        {ADVISORIES.map(a => (
+          <div key={a.id} className="glass-card p-4 flex flex-col sm:flex-row gap-4 items-start mb-3 border-transparent group overflow-hidden relative">
+            <div className="flex gap-4 items-start w-full">
+              <div className="bg-slate-50 p-3 rounded-2xl shrink-0">{a.icon}</div>
+              <div className="flex-1 min-w-0">
+                <h4 className="font-bold text-xs text-slate-800">{a.title}</h4>
+                <p className="text-[10px] text-slate-500 leading-relaxed font-medium break-words">{a.text}</p>
               </div>
-              <div>
-                <p className="text-xs font-bold text-slate-800">{tx.title}</p>
-                <p className="text-[10px] text-slate-400 font-bold uppercase">{tx.date}</p>
-              </div>
+              {a.title === 'Soil Tip' && (
+                <button
+                  onClick={() => setIsSoilModalOpen(true)}
+                  className="bg-[#001F3F] text-white p-2 rounded-xl hover:scale-110 transition-transform shadow-md"
+                >
+                  <Camera size={16} />
+                </button>
+              )}
             </div>
-            <p className="text-xs font-bold text-slate-900">₦{tx.amount.toLocaleString()}</p>
           </div>
         ))}
+        <SoilAnalysisModal isOpen={isSoilModalOpen} onClose={() => setIsSoilModalOpen(false)} />
       </div>
-    </div>
-  </motion.div>
-);
+
+      {/* Transactions */}
+      <div>
+        <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Transaction History</h3>
+        <div className="space-y-3">
+          {TRANSACTIONS.map(tx => (
+            <div key={tx.id} className="flex flex-col p-4 bg-white rounded-[2rem] border border-slate-100 shadow-sm gap-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className={`p-2 rounded-xl ${tx.type === 'REDEMPTION' ? 'bg-orange-50 text-orange-500' : 'bg-[#001F3F]/10 text-[#001F3F]'}`}>
+                    {tx.type === 'REDEMPTION' ? <ArrowUpRight size={18} /> : <ArrowDownLeft size={18} />}
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-slate-800">{tx.title}</p>
+                    <p className="text-[10px] text-slate-400 font-bold uppercase">{tx.date}</p>
+                  </div>
+                </div>
+                <p className="text-xs font-bold text-slate-900">₦{tx.amount.toLocaleString()}</p>
+              </div>
+              {tx.supplyDetail && (
+                <div className="ml-11 px-3 py-1 bg-slate-50 rounded-lg inline-block self-start">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
+                    Supply: <span className="text-slate-600">{tx.supplyDetail}</span>
+                  </p>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    </motion.div>
+  );
+};
 
 const RoleSelector = ({ onSelect }) => (
   <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:24px_24px]">
@@ -154,7 +248,8 @@ const RoleSelector = ({ onSelect }) => (
       {[
         { id: 'farmer', label: 'Farmer Portal', icon: <UserCircle />, desc: 'Biometric wallet & subsidies', color: 'bg-[#001F3F]/10 text-[#001F3F]' },
         { id: 'agent', label: 'Field Agent', icon: <Users />, desc: 'Register farmers offline', color: 'bg-gov-blue/10 text-gov-blue' },
-        { id: 'dealer', label: 'Agro-Dealer', icon: <ShoppingBag />, desc: 'Authorize redemptions', color: 'bg-orange-500/10 text-orange-500' },
+        { id: 'dealer', label: 'Dealer Point', icon: <ShoppingBag />, desc: 'Authorize redemptions', color: 'bg-orange-500/10 text-orange-500' },
+        { id: 'ussd', label: 'Offline / USSD', icon: <Phone />, desc: 'For non-smartphone users', color: 'bg-[#8fa189]/20 text-slate-700' },
         { id: 'admin', label: 'Government Admin', icon: <Activity />, desc: 'National monitoring', color: 'bg-purple-600/10 text-purple-600' }
       ].map(role => (
         <button
@@ -182,6 +277,8 @@ const App = () => {
   const [setupStep, setSetupStep] = useState('biometric'); // biometric, farm, dashboard
 
   if (!role) return <RoleSelector onSelect={setRole} />;
+
+  if (role === 'ussd') return <USSDSimulator onClose={() => setRole(null)} />;
 
   // --- FARMER ROLE LOGIC ---
   if (role === 'farmer') {

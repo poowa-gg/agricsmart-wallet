@@ -161,14 +161,13 @@ export const AgentInterface = () => {
                 <p className="text-slate-500">Offline-ready farmer registration and verification</p>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 mb-8">
-                <div className="bg-[#001F3F] text-white p-6 rounded-[2rem] shadow-xl">
-                    <p className="text-[10px] font-bold uppercase opacity-70 mb-1">Commission</p>
-                    <h3 className="text-2xl font-bold italic">₦42,500</h3>
-                </div>
-                <div className="bg-slate-900 text-white p-6 rounded-[2rem] shadow-xl">
-                    <p className="text-[10px] font-bold uppercase opacity-70 mb-1">Queue</p>
-                    <h3 className="text-2xl font-bold italic">8 Pending</h3>
+            <div className="grid grid-cols-1 gap-4 mb-8">
+                <div className="bg-gradient-to-br from-[#001F3F] to-slate-800 text-white p-6 rounded-[2rem] shadow-xl flex items-center justify-between">
+                    <div>
+                        <p className="text-[10px] font-bold uppercase opacity-70 mb-1">Total Registrations</p>
+                        <h3 className="text-2xl font-bold italic">124 Farmers</h3>
+                    </div>
+                    <Users className="opacity-20" size={40} />
                 </div>
             </div>
 
@@ -208,32 +207,57 @@ export const AgentInterface = () => {
                             <h3 className="text-2xl font-bold text-slate-800 mb-6">New Farmer</h3>
 
                             <form onSubmit={handleSubmit} className="space-y-4">
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-4">
+                                    <div className="p-4 bg-blue-50 rounded-2xl border border-blue-100 flex items-center justify-between">
+                                        <div className="flex items-center gap-3">
+                                            <ShieldCheck className="text-[#001F3F]" size={20} />
+                                            <div>
+                                                <p className="text-[10px] font-bold text-[#001F3F] uppercase">Biometric NIN Match</p>
+                                                <p className="text-xs font-bold text-slate-700">Awaiting scan...</p>
+                                            </div>
+                                        </div>
+                                        <button type="button" className="text-[10px] font-bold bg-[#001F3F] text-white px-3 py-1 rounded-lg">VERIFY</button>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <input
+                                            type="text"
+                                            placeholder="First Name"
+                                            className="w-full p-4 bg-slate-50 border-0 rounded-2xl font-bold text-slate-800 focus:ring-2 focus:ring-[#001F3F] outline-none text-sm"
+                                            required
+                                        />
+                                        <input
+                                            type="text"
+                                            placeholder="Last Name"
+                                            className="w-full p-4 bg-slate-50 border-0 rounded-2xl font-bold text-slate-800 focus:ring-2 focus:ring-[#001F3F] outline-none text-sm"
+                                            required
+                                        />
+                                    </div>
                                     <input
                                         type="text"
-                                        placeholder="First Name"
-                                        className="w-full p-4 bg-slate-50 border-0 rounded-2xl font-bold text-slate-800 focus:ring-2 focus:ring-[#001F3F] outline-none"
+                                        placeholder="NIN Number"
+                                        className="w-full p-4 bg-slate-50 border-0 rounded-2xl font-bold text-slate-800 focus:ring-2 focus:ring-[#001F3F] outline-none text-sm"
                                         required
                                     />
+                                    <select className="w-full p-4 bg-slate-50 border-0 rounded-2xl font-bold text-slate-800 focus:ring-2 focus:ring-[#001F3F] outline-none text-sm appearance-none">
+                                        <option value="">Select Cooperative</option>
+                                        <option>Unity Farmers Coop</option>
+                                        <option>North-Central Maize Association</option>
+                                        <option>Green Growth Collective</option>
+                                    </select>
+                                    <select className="w-full p-4 bg-slate-50 border-0 rounded-2xl font-bold text-slate-800 focus:ring-2 focus:ring-[#001F3F] outline-none text-sm appearance-none">
+                                        <option value="">Select Dealer Point</option>
+                                        <option>Gwagwalada Central Hub</option>
+                                        <option>Kuje Agro-Service</option>
+                                        <option>Bwari Input Center</option>
+                                    </select>
                                     <input
-                                        type="text"
-                                        placeholder="Last Name"
-                                        className="w-full p-4 bg-slate-50 border-0 rounded-2xl font-bold text-slate-800 focus:ring-2 focus:ring-[#001F3F] outline-none"
+                                        type="tel"
+                                        placeholder="Phone Number"
+                                        className="w-full p-4 bg-slate-50 border-0 rounded-2xl font-bold text-slate-800 focus:ring-2 focus:ring-[#001F3F] outline-none text-sm"
                                         required
                                     />
                                 </div>
-                                <input
-                                    type="text"
-                                    placeholder="NIN Number"
-                                    className="w-full p-4 bg-slate-50 border-0 rounded-2xl font-bold text-slate-800 focus:ring-2 focus:ring-[#001F3F] outline-none"
-                                    required
-                                />
-                                <input
-                                    type="tel"
-                                    placeholder="Phone Number"
-                                    className="w-full p-4 bg-slate-50 border-0 rounded-2xl font-bold text-slate-800 focus:ring-2 focus:ring-[#001F3F] outline-none"
-                                    required
-                                />
                                 <button type="submit" className="w-full btn-primary py-4 mt-4">
                                     Save to Queue
                                 </button>
@@ -314,8 +338,8 @@ export const AgroDealerInterface = () => {
                         onClick={handleScan}
                         disabled={scanning || processing}
                         className={`w-full py-5 text-lg font-bold rounded-2xl transition-all ${showSuccess
-                                ? 'bg-green-500 text-white shadow-lg shadow-green-500/20'
-                                : 'btn-primary'
+                            ? 'bg-green-500 text-white shadow-lg shadow-green-500/20'
+                            : 'btn-primary'
                             }`}
                     >
                         {showSuccess ? 'Print Receipt' : 'Capture Payment'}
@@ -336,6 +360,70 @@ export const AgroDealerInterface = () => {
 
                 <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-blue-900/5 rounded-full blur-3xl transition-transform group-hover:scale-110" />
             </div>
+
+            <div className="glass-card p-8 mb-8">
+                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-6">Authorize New Purchase</h4>
+                <div className="grid grid-cols-2 gap-4">
+                    <button
+                        onClick={() => setPurchaseType('Fertilizer')}
+                        className="p-6 bg-slate-50 rounded-[2rem] border border-slate-100 hover:border-[#001F3F] transition-all flex flex-col items-center gap-3 group"
+                    >
+                        <div className="bg-[#001F3F]/10 p-3 rounded-2xl text-[#001F3F] group-hover:bg-[#001F3F] group-hover:text-white transition-colors">
+                            <TrendingUp size={24} />
+                        </div>
+                        <span className="font-bold text-slate-800 text-sm">Fertilizer</span>
+                    </button>
+                    <button
+                        onClick={() => setPurchaseType('Seeds')}
+                        className="p-6 bg-slate-50 rounded-[2rem] border border-slate-100 hover:border-[#001F3F] transition-all flex flex-col items-center gap-3 group"
+                    >
+                        <div className="bg-orange-500/10 p-3 rounded-2xl text-orange-500 group-hover:bg-orange-500 group-hover:text-white transition-colors">
+                            <MapIcon size={24} />
+                        </div>
+                        <span className="font-bold text-slate-800 text-sm">Seeds</span>
+                    </button>
+                </div>
+            </div>
+
+            <AnimatePresence>
+                {purchaseType && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-4">
+                        <motion.div initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} className="bg-white w-full max-w-md rounded-[2.5rem] p-8 shadow-2xl relative">
+                            <button onClick={() => setPurchaseType(null)} className="absolute top-6 right-6 p-2 bg-slate-100 rounded-full"><X size={20} /></button>
+                            <h3 className="text-2xl font-bold text-slate-800 mb-6">{purchaseType} Purchase</h3>
+                            <div className="space-y-4">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Select Type</label>
+                                    <select className="w-full p-4 bg-slate-50 border-0 rounded-2xl font-bold text-slate-800 outline-none">
+                                        {purchaseType === 'Fertilizer' ? (
+                                            <>
+                                                <option>NPK 15-15-15</option>
+                                                <option>Urea (46-0-0)</option>
+                                                <option>SSP (Single Super Phosphate)</option>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <option>Maize (Faro 44)</option>
+                                                <option>Rice (Hybrid)</option>
+                                                <option>Soybeans (TGX)</option>
+                                            </>
+                                        )}
+                                    </select>
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Quantity ({purchaseType === 'Fertilizer' ? 'Bags' : 'KG'})</label>
+                                    <input type="number" defaultValue="1" className="w-full p-4 bg-slate-50 border-0 rounded-2xl font-bold text-slate-800 outline-none" />
+                                </div>
+                                <div className="p-4 bg-blue-50 rounded-2xl border border-blue-100 flex justify-between items-center">
+                                    <span className="text-[10px] font-bold text-[#001F3F] uppercase tracking-widest">Real-time Price</span>
+                                    <span className="text-lg font-extrabold text-[#001F3F]">₦{purchaseType === 'Fertilizer' ? '18,500' : '4,200'} <span className="text-[10px] opacity-60">per unit</span></span>
+                                </div>
+                                <button onClick={() => setPurchaseType(null)} className="w-full btn-primary py-5 mt-4">Confirm Redemption</button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             <div className="glass-card p-6">
                 <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Stock Overview</h4>
