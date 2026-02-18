@@ -21,7 +21,8 @@ import {
   CheckCircle2,
   X,
   Loader2,
-  Phone
+  Phone,
+  Camera
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BiometricOnboarding, FarmRegistration } from './components/Onboarding';
@@ -252,7 +253,7 @@ const RoleSelector = ({ onSelect }) => (
       {[
         { id: 'farmer', label: 'Farmer Portal', icon: <UserCircle />, desc: 'Biometric wallet & subsidies', color: 'bg-[#001F3F]/10 text-[#001F3F]' },
         { id: 'agent', label: 'Field Agent', icon: <Users />, desc: 'Register farmers offline', color: 'bg-gov-blue/10 text-gov-blue' },
-        { id: 'dealer', label: 'Dealer Point', icon: <ShoppingBag />, desc: 'Authorize redemptions', color: 'bg-orange-500/10 text-orange-500' },
+        { id: 'dealer', label: 'Input Supplier', icon: <ShoppingBag />, desc: 'Verify input redemptions', color: 'bg-orange-500/10 text-orange-500' },
         { id: 'ussd', label: 'Offline / USSD', icon: <Phone />, desc: 'For non-smartphone users', color: 'bg-[#8fa189]/20 text-slate-700' },
         { id: 'admin', label: 'Government Admin', icon: <Activity />, desc: 'National monitoring', color: 'bg-purple-600/10 text-purple-600' }
       ].map(role => (

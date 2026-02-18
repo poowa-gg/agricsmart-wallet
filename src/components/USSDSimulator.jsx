@@ -22,7 +22,7 @@ const MENUS = {
     },
     REDEEM: {
         title: 'Input Redemption',
-        content: 'Enter Voucher Code provided by Dealer.\n\n0. Back',
+        content: 'Enter Voucher Code provided by Input Supplier.\n\n0. Back',
     },
     SUPPORT: {
         title: 'AgriSmart Help',

@@ -49,8 +49,8 @@ export const GovernmentDashboard = () => {
                         <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tighter">National Monitor</h2>
                         <p className="text-slate-500 font-medium">Real-time agricultural financial liquidity and redemption</p>
                     </div>
-                    <div className="flex gap-3 w-full sm:w-auto">
-                        <div className="relative">
+                    <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                        <div className="relative w-full sm:w-48">
                             <button
                                 onClick={() => setIsFilterOpen(!isFilterOpen)}
                                 className="flex items-center justify-center gap-2 bg-slate-100 px-4 py-3 rounded-xl text-sm font-bold text-slate-600 w-full sm:w-auto"
@@ -59,7 +59,7 @@ export const GovernmentDashboard = () => {
                                 {region}
                             </button>
                             {isFilterOpen && (
-                                <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden z-20">
+                                <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden z-20">
                                     {['All Regions', 'North Central', 'North East', 'North West', 'South East', 'South South', 'South West'].map((r) => (
                                         <button
                                             key={r}
@@ -247,7 +247,7 @@ export const AgentInterface = () => {
                                         <option>Green Growth Collective</option>
                                     </select>
                                     <select className="w-full p-4 bg-slate-50 border-0 rounded-2xl font-bold text-slate-800 focus:ring-2 focus:ring-[#001F3F] outline-none text-sm appearance-none">
-                                        <option value="">Select Dealer Point</option>
+                                        <option value="">Select Input Supplier</option>
                                         <option>Gwagwalada Central Hub</option>
                                         <option>Kuje Agro-Service</option>
                                         <option>Bwari Input Center</option>
@@ -289,6 +289,7 @@ export const AgentInterface = () => {
 
 // --- AGRO DEALER INTERFACE ---
 export const AgroDealerInterface = () => {
+    const [purchaseType, setPurchaseType] = useState(null);
     const [scanning, setScanning] = useState(false);
     const [processing, setProcessing] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
@@ -309,8 +310,8 @@ export const AgroDealerInterface = () => {
     return (
         <div className="pt-24 px-6 max-w-lg mx-auto pb-24">
             <div className="mb-12">
-                <h2 className="text-3xl font-extrabold text-slate-900 tracking-tighter">Dealer Point</h2>
-                <p className="text-slate-500">Authorize input redemptions securely</p>
+                <h2 className="text-3xl font-extrabold text-slate-900 tracking-tighter">Input Supplier</h2>
+                <p className="text-slate-500">Verify input redemptions securely</p>
             </div>
 
             <div className="bg-white p-8 rounded-[3rem] border border-slate-100 shadow-2xl mb-8 relative overflow-hidden group">
