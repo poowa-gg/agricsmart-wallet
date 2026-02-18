@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-navy: #001F3F;
+  --color-brand-blue: #003366;
+  --color-brand-soft: #F0F4F8;
+}
+
+:root {
+  --gov-navy: #001F3F;
+  --gov-gold: #FFD700;
+  --gov-blue: #003366;
+}
+
+body {
+  @apply bg-white text-slate-900 font-sans;
+}
+
+.glass-card {
+  @apply bg-white/90 backdrop-blur-md border border-slate-100 shadow-xl rounded-2xl;
+}
+
+.btn-primary {
+  @apply bg-[#001F3F] text-white px-6 py-3 rounded-xl font-semibold hover:bg-[#003366] transition-all active:scale-95 shadow-lg shadow-blue-900/10;
+}
+
+.nav-link {
+  @apply flex flex-col items-center gap-1 text-slate-400 hover:text-[#001F3F] transition-colors;
+}
+
+.nav-link.active {
+  @apply text-[#001F3F];
+}
