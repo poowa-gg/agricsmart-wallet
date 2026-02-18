@@ -13,7 +13,8 @@ import {
     Check,
     ScanLine,
     CreditCard,
-    Loader2
+    Loader2,
+    ShieldCheck
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 

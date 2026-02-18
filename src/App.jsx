@@ -17,7 +17,11 @@ import {
   Activity,
   ArrowUpRight,
   ArrowDownLeft,
-  Wallet
+  Wallet,
+  CheckCircle2,
+  X,
+  Loader2,
+  Phone
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BiometricOnboarding, FarmRegistration } from './components/Onboarding';
@@ -96,7 +100,7 @@ const SoilAnalysisModal = ({ isOpen, onClose }) => {
                     <p className="text-[10px] font-bold text-gov-green uppercase mb-1">General Recommendation</p>
                     <p className="text-xs font-medium text-slate-600 leading-relaxed">{result.general}</p>
                   </div>
-                  <button onClick={onClose} className="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold text-sm">Close Analysis</p>
+                  <button onClick={onClose} className="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold text-sm">Close Analysis</button>
                 </>
               )}
             </div>
