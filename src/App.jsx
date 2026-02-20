@@ -112,6 +112,79 @@ const SoilAnalysisModal = ({ isOpen, onClose }) => {
     </AnimatePresence>
   );
 };
+const WeatherAlertModal = ({ isOpen, onClose }) => {
+  const forecast = [
+    { day: 'Friday', condition: 'Heavy Rain', temp: '24°C', risk: 'High Runoff' },
+    { day: 'Saturday', condition: 'Thunderstorms', temp: '23°C', risk: 'Flash Flood' },
+    { day: 'Sunday', condition: 'Cloudy', temp: '28°C', risk: 'Low' },
+  ];
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[100] flex items-end sm:items-center justify-center p-4"
+        >
+          <motion.div
+            initial={{ scale: 0.9, y: 20 }}
+            animate={{ scale: 1, y: 0 }}
+            exit={{ scale: 0.9, y: 20 }}
+            className="bg-white w-full max-w-sm rounded-[2.5rem] overflow-hidden shadow-2xl relative max-h-[90vh] flex flex-col"
+          >
+            <div className="bg-blue-600 h-40 shrink-0 relative flex items-center justify-center overflow-hidden">
+              <div className="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?auto=format&fit=crop&q=80&w=800')] bg-cover bg-center" />
+              <div className="relative z-10 text-white text-center">
+                <CloudRain size={48} className="mx-auto mb-2 animate-bounce" />
+                <h3 className="text-xl font-bold uppercase tracking-widest">Severe Weather Alert</h3>
+              </div>
+            </div>
+
+            <div className="p-8 overflow-y-auto scrollbar-hide flex-1">
+              <div className="mb-6">
+                <p className="text-[10px] font-bold text-red-500 uppercase mb-2 flex items-center gap-1">
+                  <Activity size={12} /> Emergency Advisory: FCT Area
+                </p>
+                <p className="text-sm font-bold text-slate-800 leading-tight mb-2">Heavy rainfall expected within the next 48 hours. Risk of seedling washout in FCT, Gwagwalada, and Kuje zones.</p>
+              </div>
+
+              <div className="space-y-3 mb-8">
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">3-Day Forecast</p>
+                {forecast.map((f, i) => (
+                  <div key={i} className="flex items-center justify-between p-3 bg-slate-50 rounded-2xl border border-slate-100">
+                    <div>
+                      <p className="text-xs font-bold text-slate-800">{f.day}</p>
+                      <p className="text-[10px] text-slate-500">{f.condition}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs font-bold text-blue-600">{f.temp}</p>
+                      <p className="text-[10px] font-bold text-red-500 uppercase">{f.risk}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="bg-blue-50 p-4 rounded-2xl mb-8 border border-blue-100">
+                <p className="text-[10px] font-bold text-blue-600 uppercase mb-1">Protective Action</p>
+                <p className="text-xs font-medium text-slate-600 leading-relaxed">Ensure drainage channels are clear. Use mulching or temporary silt fences to protect young seedlings from topsoil runoff.</p>
+              </div>
+
+              <button onClick={onClose} className="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold text-sm shadow-xl shadow-slate-900/20 active:scale-[0.98] transition-transform">Acknowledge Alert</button>
+            </div>
+            <button
+              onClick={onClose}
+              className="absolute top-4 right-4 p-2 bg-white/20 rounded-full text-white hover:bg-white/30 transition-colors z-20"
+            >
+              <X size={16} />
+            </button>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
 
 const Header = ({ userRole, onLogout }) => (
   <header className="fixed top-0 left-0 right-0 bg-[#001F3F] text-white p-4 flex justify-between items-center z-50 shadow-lg shadow-blue-900/10">
@@ -139,6 +212,7 @@ const Header = ({ userRole, onLogout }) => (
 
 const FarmerDashboard = () => {
   const [isSoilModalOpen, setIsSoilModalOpen] = useState(false);
+  const [isWeatherModalOpen, setIsWeatherModalOpen] = useState(false);
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="pt-24 pb-24 px-4 max-w-md mx-auto">
@@ -184,9 +258,16 @@ const FarmerDashboard = () => {
       <div className="mb-8">
         <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Pulse Insights</h3>
         {ADVISORIES.map(a => (
-          <div key={a.id} className="glass-card p-4 flex flex-col sm:flex-row gap-4 items-start mb-3 border-transparent group overflow-hidden relative">
-            <div className="flex gap-4 items-start w-full">
-              <div className="bg-slate-50 p-3 rounded-2xl shrink-0">{a.icon}</div>
+          <div key={a.id} className={`glass-card p-4 flex flex-col sm:flex-row gap-4 items-start mb-3 border-transparent group overflow-hidden relative ${a.title === 'Weather Alert' ? 'bg-blue-50/30' : ''}`}>
+            {a.title === 'Weather Alert' && (
+              <motion.div
+                animate={{ opacity: [0.1, 0.3, 0.1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="absolute inset-0 bg-blue-500 pointer-events-none"
+              />
+            )}
+            <div className="flex gap-4 items-start w-full relative z-10">
+              <div className="bg-white p-3 rounded-2xl shrink-0 shadow-sm">{a.icon}</div>
               <div className="flex-1 min-w-0">
                 <h4 className="font-bold text-xs text-slate-800">{a.title}</h4>
                 <p className="text-[10px] text-slate-500 leading-relaxed font-medium break-words">{a.text}</p>
@@ -199,10 +280,19 @@ const FarmerDashboard = () => {
                   <Camera size={16} />
                 </button>
               )}
+              {a.title === 'Weather Alert' && (
+                <button
+                  onClick={() => setIsWeatherModalOpen(true)}
+                  className="bg-blue-500 text-white p-2 rounded-xl hover:scale-110 transition-transform shadow-md"
+                >
+                  <ArrowRight size={16} />
+                </button>
+              )}
             </div>
           </div>
         ))}
         <SoilAnalysisModal isOpen={isSoilModalOpen} onClose={() => setIsSoilModalOpen(false)} />
+        <WeatherAlertModal isOpen={isWeatherModalOpen} onClose={() => setIsWeatherModalOpen(false)} />
       </div>
 
       {/* Transactions */}
