@@ -127,12 +127,19 @@ export const BiometricOnboarding = ({ onComplete }) => {
             </div>
 
             <p className="text-center text-sm font-medium mb-2 text-slate-700">
-                {thumbState === 'idle' && 'Press & hold to scan your thumb'}
-                {thumbState === 'pressing' && `Scanning... ${thumbProgress}%`}
-                {thumbState === 'analyzing' && 'Analyzing biometric markers...'}
-                {thumbState === 'done' && '✓ Thumbprint verified!'}
+                {thumbState === 'idle' && 'Place thumb to scan'}
+                {thumbState === 'pressing' && (
+                    <motion.span
+                        animate={{ opacity: [1, 0.5, 1] }}
+                        transition={{ repeat: Infinity, duration: 0.5 }}
+                    >
+                        Reading biometric data... {thumbProgress}%
+                    </motion.span>
+                )}
+                {thumbState === 'analyzing' && 'Authenticating identity...'}
+                {thumbState === 'done' && '✓ Biometric Verified'}
             </p>
-            <p className="text-center text-xs text-slate-400 mb-8">Keep your thumb steadily pressed until complete</p>
+            <p className="text-center text-xs text-slate-400 mb-8">Maintain steady contact with the sensor</p>
 
             <button
                 onClick={handleThumbPress}
@@ -344,15 +351,28 @@ export const FarmRegistration = ({ onComplete }) => {
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="space-y-2">
-                        <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Main Crop Type</label>
-                        <select className="w-full p-4 bg-white border border-slate-200 rounded-2xl outline-none focus:border-[#001F3F] text-slate-800 font-medium appearance-none">
-                            <option>Maize (Corn)</option>
-                            <option>Rice</option>
-                            <option>Cassava</option>
-                            <option>Sorghum</option>
-                            <option>Cocoa</option>
-                        </select>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Major Crop</label>
+                            <select className="w-full p-4 bg-white border border-slate-200 rounded-2xl outline-none focus:border-[#001F3F] text-slate-800 font-medium appearance-none">
+                                <option>Maize (Corn)</option>
+                                <option>Rice</option>
+                                <option>Cassava</option>
+                                <option>Sorghum</option>
+                                <option>Cocoa</option>
+                            </select>
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Minor Crop</label>
+                            <select className="w-full p-4 bg-white border border-slate-200 rounded-2xl outline-none focus:border-[#001F3F] text-slate-800 font-medium appearance-none">
+                                <option>None</option>
+                                <option>Cowpea</option>
+                                <option>Soybeans</option>
+                                <option>Groundnut</option>
+                                <option>Vegetables</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div className="space-y-2">
@@ -371,7 +391,7 @@ export const FarmRegistration = ({ onComplete }) => {
                         <div className="relative z-10 h-full flex flex-col justify-between">
                             <div className="flex justify-between items-start">
                                 <div className={`p-1 px-2 rounded-lg text-[10px] font-bold border ${gpsCaptured ? 'bg-green-500/20 text-green-500 border-green-500/30' : 'bg-[#001F3F]/20 text-[#001F3F] border-[#001F3F]/30'}`}>
-                                    {gpsCaptured ? 'GPS VERIFIED' : capturingGps ? 'WALKING...' : 'GPS ACTIVE'}
+                                    {gpsCaptured ? 'GPS VERIFIED' : capturingGps ? 'CAPTURING...' : 'GPS ACTIVE'}
                                 </div>
                                 <Maximize size={16} className="text-slate-500" />
                             </div>
@@ -379,7 +399,7 @@ export const FarmRegistration = ({ onComplete }) => {
                             {capturingGps ? (
                                 <div className="w-full space-y-2">
                                     <div className="flex justify-between text-[10px] text-white font-bold uppercase tracking-widest">
-                                        <span>Capturing boundary points...</span>
+                                        <span>Capturing real-time coordinates...</span>
                                         <span>{gpsProgress}%</span>
                                     </div>
                                     <div className="w-full bg-white/10 h-1 rounded-full overflow-hidden">
@@ -409,7 +429,7 @@ export const FarmRegistration = ({ onComplete }) => {
                             className="w-full py-4 bg-[#001F3F]/10 text-[#001F3F] rounded-2xl font-bold text-sm flex items-center justify-center gap-2 border border-[#001F3F]/20 hover:bg-[#001F3F]/20 transition-all mb-4"
                         >
                             <MapPin size={18} />
-                            Walk to capture accurate location
+                            Capture Current Location (GPS)
                         </button>
                     )}
 

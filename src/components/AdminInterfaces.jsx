@@ -412,24 +412,48 @@ export const AgentInterface = () => {
 
     const renderOverview = () => (
         <>
-            <div className="grid grid-cols-1 gap-4 mb-8">
-                <div className="bg-gradient-to-br from-[#001F3F] to-slate-800 text-white p-6 rounded-[2rem] shadow-xl flex items-center justify-between">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div className="bg-gradient-to-br from-[#001F3F] to-slate-800 text-white p-4 rounded-2xl shadow-lg flex items-center justify-between col-span-2">
                     <div>
-                        <p className="text-[10px] font-bold uppercase opacity-70 mb-1">Total Registrations</p>
-                        <h3 className="text-2xl font-bold italic">124 Farmers</h3>
+                        <p className="text-[10px] font-bold uppercase opacity-70 mb-1">Total Individual Farmers</p>
+                        <h3 className="text-xl font-bold italic">124 Registered</h3>
                     </div>
-                    <Users className="opacity-20" size={40} />
+                    <Users className="opacity-20" size={32} />
+                </div>
+                <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Cooperatives</p>
+                    <h3 className="text-lg font-bold text-slate-800">12</h3>
+                </div>
+                <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Companies</p>
+                    <h3 className="text-lg font-bold text-slate-800">5</h3>
                 </div>
             </div>
 
             <div className="grid grid-cols-1 gap-4">
                 <button
-                    onClick={() => setView('cooperatives')}
+                    onClick={() => setView('agent-biodata')}
                     className="w-full bg-white p-6 rounded-3xl border border-slate-100 flex items-center justify-between group hover:border-[#001F3F] transition-all"
                 >
                     <div className="flex items-center gap-4">
                         <div className="bg-blue-50 p-3 rounded-2xl text-[#001F3F]">
-                            <Building2 size={24} />
+                            <Users size={24} />
+                        </div>
+                        <div className="text-left">
+                            <p className="font-bold text-slate-800">Agent Biodata</p>
+                            <p className="text-xs text-slate-400">Register or update agent profile</p>
+                        </div>
+                    </div>
+                    <ChevronRight size={20} className="text-slate-300 group-hover:text-[#001F3F]" />
+                </button>
+
+                <button
+                    onClick={() => setView('cooperatives')}
+                    className="w-full bg-white p-6 rounded-3xl border border-slate-100 flex items-center justify-between group hover:border-[#001F3F] transition-all"
+                >
+                    <div className="flex items-center gap-4">
+                        <div className="bg-slate-50 p-3 rounded-2xl text-slate-600">
+                            <Users size={24} />
                         </div>
                         <div className="text-left">
                             <p className="font-bold text-slate-800">Cooperative Groups</p>
@@ -546,6 +570,46 @@ export const AgentInterface = () => {
         </div>
     );
 
+    const renderAgentBiodata = () => (
+        <div className="space-y-6">
+            <button onClick={() => setView('overview')} className="flex items-center gap-2 text-[#001F3F] font-bold text-sm mb-4">
+                <ChevronLeft size={18} /> Back to Terminal
+            </button>
+
+            <div className="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-xl">
+                <h3 className="text-2xl font-bold text-slate-800 mb-6">Agent Biodata</h3>
+                <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">First Name</label>
+                            <input type="text" placeholder="e.g. John" className="w-full p-4 bg-slate-50 border-0 rounded-2xl font-bold text-slate-800 focus:ring-2 focus:ring-[#001F3F] outline-none text-sm" />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Last Name</label>
+                            <input type="text" placeholder="e.g. Doe" className="w-full p-4 bg-slate-50 border-0 rounded-2xl font-bold text-slate-800 focus:ring-2 focus:ring-[#001F3F] outline-none text-sm" />
+                        </div>
+                    </div>
+                    <div className="space-y-2">
+                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Agent ID</label>
+                        <input type="text" defaultValue="AGT-420-FIX" readOnly className="w-full p-4 bg-slate-100 border-0 rounded-2xl font-bold text-slate-400 outline-none text-sm cursor-not-allowed" />
+                    </div>
+                    <div className="space-y-2">
+                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">State of Operation</label>
+                        <select className="w-full p-4 bg-slate-50 border-0 rounded-2xl font-bold text-slate-800 outline-none text-sm appearance-none">
+                            <option>FCT Abuja</option>
+                            <option>Kano</option>
+                            <option>Lagos</option>
+                            <option>Kaduna</option>
+                        </select>
+                    </div>
+                    <button className="w-full btn-primary py-4 mt-4">
+                        Update Biodata
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+
     return (
         <div className="pt-24 px-6 max-w-lg mx-auto pb-12">
             <div className="mb-12">
@@ -557,6 +621,7 @@ export const AgentInterface = () => {
             {view === 'cooperatives' && renderCooperatives()}
             {view === 'farmers' && renderFarmers()}
             {view === 'details' && renderDetails()}
+            {view === 'agent-biodata' && renderAgentBiodata()}
 
             {/* Registration Modal Overlay */}
             <AnimatePresence>
@@ -754,7 +819,7 @@ export const AgroDealerInterface = () => {
                                             </>
                                         ) : (
                                             <>
-                                                <option>Maize (Faro 44)</option>
+                                                <option>Maize (SAMMAZ 51)</option>
                                                 <option>Rice (Hybrid)</option>
                                                 <option>Soybeans (TGX)</option>
                                             </>
