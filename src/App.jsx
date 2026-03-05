@@ -26,7 +26,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BiometricOnboarding, FarmRegistration } from './components/Onboarding';
-import { GovernmentDashboard, AgentInterface, AgroDealerInterface } from './components/AdminInterfaces';
+import { WalletDashboard, AgentInterface, AgroDealerInterface } from './components/AdminInterfaces';
 import { USSDSimulator } from './components/USSDSimulator';
 
 // --- MOCK DATA ---
@@ -345,7 +345,7 @@ const RoleSelector = ({ onSelect }) => (
         { id: 'agent', label: 'Field Agent', icon: <Users />, desc: 'Register farmers offline', color: 'bg-gov-blue/10 text-gov-blue' },
         { id: 'dealer', label: 'Input Supplier', icon: <ShoppingBag />, desc: 'Verify input redemptions', color: 'bg-orange-500/10 text-orange-500' },
         { id: 'ussd', label: 'Offline / USSD', icon: <Phone />, desc: 'For non-smartphone users', color: 'bg-[#8fa189]/20 text-slate-700' },
-        { id: 'admin', label: 'Government Admin', icon: <Activity />, desc: 'National monitoring', color: 'bg-purple-600/10 text-purple-600' }
+        { id: 'admin', label: 'Wallet', icon: <Activity />, desc: 'Accountant, Bank & Approvals', color: 'bg-purple-600/10 text-purple-600' }
       ].map(role => (
         <button
           key={role.id}
@@ -429,7 +429,7 @@ const App = () => {
   return (
     <div className="min-h-screen bg-slate-50">
       <Header userRole={role} onLogout={() => setRole(null)} />
-      {role === 'admin' && <GovernmentDashboard />}
+      {role === 'admin' && <WalletDashboard />}
       {role === 'agent' && <AgentInterface />}
       {role === 'dealer' && <AgroDealerInterface />}
     </div>
